@@ -99,6 +99,9 @@ while continuer:
         niveau = Niveau(choix)
         niveau.generer()
         niveau.afficher(fenetre)
+        pac_gomme = pac_gomme('pac_gommes')
+        pac_gomme.generation()
+        pac_gomme.affichage(fenetre)
         Pacman = Perso("Perso/droite.png", "Perso/gauche.png", "Perso/haut.png", "Perso/bas.png", niveau)
         Ghost_red = Ghost_red("Ghost/Red/droite.png", "Ghost/Red/gauche.png", "Ghost/Red/haut.png", "Ghost/Red/bas.png", niveau)
         Ghost_pink = Ghost_pink("Ghost/Pink/droite.png", "Ghost/Pink/gauche.png", "Ghost/Pink/haut.png", "Ghost/Pink/bas.png", niveau)
@@ -156,6 +159,7 @@ while continuer:
 		#Affichages aux nouvelles positions
         fenetre.blit(fond, (0,0))
         niveau.afficher(fenetre)
+        pac_gomme.affichage(fenetre)
         fenetre.blit(Baie.direction, (Baie.x, Baie.y))
         fenetre.blit(Pacman.direction, (Pacman.x, Pacman.y))
         fenetre.blit(Ghost_red.direction, (Ghost_red.x, Ghost_red.y))

@@ -9,9 +9,7 @@ class Niveau:
 		self.fichier = fichier
 		self.structure = 0
 
-
 	def generer(self):
-
 		#On ouvre le fichier
 		with open(self.fichier, "r") as fichier:
 			structure_niveau = []
@@ -33,8 +31,7 @@ class Niveau:
 	def afficher(self, fenetre):
 
 		mur = pygame.image.load("Structure/mur.png").convert()
-		design = pygame.image.load("pac_gomme.png").convert_alpha()
-
+		noir = pygame.image.load("Structure/noir.png").convert()
 		#On parcourt la liste du niveau
 		num_ligne = 0
 		for ligne in self.structure:
@@ -48,9 +45,7 @@ class Niveau:
 					fenetre.blit(mur, (x,y))
 					num_case += 1
 				elif sprite == 'r' or sprite == 'p' or sprite == 'q':
-					fenetre.blit(design, (x,y))
 					num_case += 1
-
 			num_ligne += 1
 
 class Perso:
@@ -72,7 +67,7 @@ class Perso:
 
 
 	def deplacer(self, direction):
-
+		noir = pygame.image.load("Structure/noir.png").convert_alpha()
 		#Déplacement vers la droite
 		if direction == 'droite':
 			if self.niveau.structure[self.case_y][self.case_x+1] == 'p':
@@ -121,32 +116,36 @@ class Ghost:
 		from random import randint
 		a=randint(1,4)
 		if a == 1:
-			if self.niveau.structure[self.case_y-1][self.case_x] != 'm':
-				self.case_y -= 1
-				self.y = self.case_y * 30
-			self.direction = self.haut
+			while self.niveau.structure[self.case_y-1][self.case_x] != 'm':
+				if self.niveau.structure[self.case_y-1][self.case_x] != 'm':
+					self.case_y -= 1
+					self.y = self.case_y * 30
+				self.direction = self.haut
 		if a == 2:
-			if self.niveau.structure[self.case_y][self.case_x+1] == 'p':
-				self.case_x = 0
-			elif self.niveau.structure[self.case_y][self.case_x+1] != 'm':
-                #Déplacement d'une case
-				self.case_x += 1
-                #Calcul de la position "réelle" en pixel
-				self.x = self.case_x * 30
-            #Image dans la bonne direction
-			self.direction = self.droite
+			while self.niveau.structure[self.case_y][self.case_x+1] != 'm':
+				if self.niveau.structure[self.case_y][self.case_x+1] == 'p':
+					self.case_x = 0
+				elif self.niveau.structure[self.case_y][self.case_x+1] != 'm':
+	                #Déplacement d'une case
+					self.case_x += 1
+	                #Calcul de la position "réelle" en pixel
+					self.x = self.case_x * 30
+	            #Image dans la bonne direction
+				self.direction = self.droite
 		if a == 3:
-			if self.niveau.structure[self.case_y+1][self.case_x] != 'm':
-				self.case_y += 1
-				self.y = self.case_y * 30
-			self.direction = self.bas
+			while self.niveau.structure[self.case_y+1][self.case_x] != 'm':
+				if self.niveau.structure[self.case_y+1][self.case_x] != 'm':
+					self.case_y += 1
+					self.y = self.case_y * 30
+				self.direction = self.bas
 		if a == 4:
-			if self.niveau.structure[self.case_y][self.case_x-1] == 'q':
-				self.case_x = 26
-			elif self.niveau.structure[self.case_y][self.case_x-1] != 'm':
-				self.case_x -= 1
-				self.x = self.case_x * 30
-			self.direction = self.gauche
+			while self.niveau.structure[self.case_y][self.case_x-1] != 'm':
+				if self.niveau.structure[self.case_y][self.case_x-1] == 'q':
+					self.case_x = 26
+				elif self.niveau.structure[self.case_y][self.case_x-1] != 'm':
+					self.case_x -= 1
+					self.x = self.case_x * 30
+				self.direction = self.gauche
 		
 class Ghost_red(Ghost):
 	def __init__(self, droite, gauche, haut, bas, niveau):
@@ -203,6 +202,52 @@ class Ghost_orange(Ghost):
 		self.direction = self.droite
 		self.niveau = niveau
 		Ghost.ghost_deplacer(self)
+
+class pac_gomme:
+	def __init__(self, fichier):
+		self.fichier = fichier
+		self.structure = 0
+		image_pac_gomme = pygame.image.load("pac_gomme.png").convert_alpha()
+
+	def generation(self):
+		with open(self.fichier, "r") as fichier:
+			structure_niveau = []
+			#On parcourt les lignes du fichier
+			for ligne in fichier:
+				ligne_niveau = []
+				#On parcourt les sprites (lettres) contenus dans le fichier
+				for sprite in ligne:
+					#On ignore les "\n" de fin de ligne
+					if sprite != '\n':
+						#On ajoute le sprite à la liste de la ligne
+						ligne_niveau.append(sprite)
+				#On ajoute la ligne à la liste du niveau
+				structure_niveau.append(ligne_niveau)
+			#On sauvegarde cette structure
+			self.structure = structure_niveau
+
+	def affichage(self, fenetre):
+		image_pac_gomme = pygame.image.load("pac_gomme.png").convert_alpha()
+		num_ligne = 0
+		for ligne in self.structure:
+			#On parcourt les listes de lignes
+			num_case = 0
+			for sprite in ligne:
+				#On calcule la position réelle en pixels
+				x = num_case * 30
+				y = num_ligne * 30
+				if sprite == 'm':
+					num_case += 1
+				if sprite == 'l':		   #m = Mur
+					fenetre.blit(image_pac_gomme, (x,y))
+					num_case += 1
+				if sprite == 'r':
+					num_case += 1
+				if sprite == 'q':
+					num_case += 1
+				if sprite == 'p':
+					num_case += 1
+			num_ligne += 1
 
 class Baie:
 	def __init__(self, design, niveau):
